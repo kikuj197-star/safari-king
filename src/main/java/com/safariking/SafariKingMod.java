@@ -22,11 +22,9 @@ public final class SafariKingMod implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(SafariKingMod::tick);
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             KingLocationTracker.reset();
-            EntityDiagnostics.reset();
         });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             KingLocationTracker.reset();
-            EntityDiagnostics.reset();
         });
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
@@ -34,17 +32,9 @@ public final class SafariKingMod implements ClientModInitializer {
                     .executes(context -> openConfig()));
             dispatcher.register(ClientCommands.literal("sking")
                     .executes(context -> openConfig()));
-            dispatcher.register(ClientCommands.literal("skingdiag")
-                    .executes(context -> EntityDiagnostics.usage())
-                    .then(ClientCommands.literal("before")
-                            .executes(context -> EntityDiagnostics.captureBefore()))
-                    .then(ClientCommands.literal("after")
-                            .executes(context -> EntityDiagnostics.captureAfter()))
-                    .then(ClientCommands.literal("clear")
-                            .executes(context -> EntityDiagnostics.clear())));
         });
 
-        LOGGER.info("[SafariKing] Ready. Use /safariking to configure helpers or /skingdiag for entity snapshots.");
+        LOGGER.info("[SafariKing] Ready. Use /safariking to configure helpers.");
     }
 
     private static int openConfig() {

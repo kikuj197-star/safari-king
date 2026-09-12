@@ -13,12 +13,6 @@ to the client:
 
 Use `/safariking` or Mod Menu to configure individual helpers.
 
-To compare what the server sends before and after opening a Snoozle wall, stand
-near it and run `/skingdiag before`, open the wall without catching the target,
-then run `/skingdiag after`. The mod writes a local report under
-`config/safari-king/`. These snapshots only run when requested and are not sent
-to the server.
-
 Tracked entities use Minecraft's vanilla glow pass, so their outline remains
 visible behind blocks like Skyblocker's Rockmite Mound highlight. Highlighted
 targets are kept renderable up to 128 blocks when the server has sent them.
