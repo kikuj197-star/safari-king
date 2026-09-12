@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "safariking",
+  "version": "${version}",
+  "name": "Safari King",
+  "description": "Location-aware visual enhancements for Critter Safari and Torrhus hunting targets.",
+  "authors": ["kikuj197-star"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.safariking.SafariKingMod"],
+    "modmenu": ["com.safariking.ModMenuIntegration"]
+  },
+  "mixins": [
+    "safariking.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "fabric-api": ">=0.155.2+26.1.2",
+    "hypixel-mod-api": ">=1.0.2",
+    "minecraft": "26.1.2",
+    "java": ">=25"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}

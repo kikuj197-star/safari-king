@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "com.safariking.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "DisplayRenderDistanceMixin",
+    "EntityGlowMixin",
+    "EntityRenderDistanceMixin",
+    "EntityTeamColorMixin",
+    "EntityRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
