@@ -3,6 +3,7 @@ package com.safariking;
 import com.mojang.authlib.properties.Property;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.RemotePlayer;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
@@ -13,9 +14,12 @@ import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.phys.AABB;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -24,8 +28,10 @@ import java.util.Map;
 public final class HighlightTargetTracker {
     public static final int HIDEONWALL_COLOR = 0xD050FF;
     public static final int HIDEYHO_COLOR = 0xFFD54A;
+    public static final int DUPLICO_COLOR = 0xFF5555;
     public static final int SNOOZLE_COLOR = 0x55FF55;
     public static final int SCRAPPY_COLOR = 0xFF5C70;
+    public static final int ROCKMITE_COLOR = 0x55FFFF;
     public static final int PANGOLIN_COLOR = 0xFF9B42;
     public static final int HIDEONFLOOR_COLOR = 0xFF4DFF;
     public static final int FLOOR_DROP_COLOR = 0x35E6FF;
@@ -33,6 +39,9 @@ public final class HighlightTargetTracker {
 
     private static final String HIDEYHO_TEXTURE =
             "ewogICJ0aW1lc3RhbXAiIDogMTc4MjgzMjk3MDkzNywKICAicHJvZmlsZUlkIiA6ICJmZDIwMGYwMDE4OTI0NzgxODI5OWIzZjE5Yzc4Y2E3MSIsCiAgInByb2ZpbGVOYW1lIiA6ICJ0dXNnIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzM1MDRmMWYyMzI3YTUxMTBlNjQzYmI4NjY3MDgyNTEyODE1ZmE0MzRhMjllZDM3ZjRjYTgzYmIxNmQyZGI1MzMiLAogICAgICAibWV0YWRhdGEiIDogewogICAgICAgICJtb2RlbCIgOiAic2xpbSIKICAgICAgfQogICAgfQogIH0KfQ==";
+
+    private static final String ROCKMITE_TEXTURE_HASH =
+            "5dbaab74d1acd0abe9d04abe9928725de5d4495fcb63b647228caf6944c20800";
 
     private static volatile Map<Integer, Integer> colors = Map.of();
     private static volatile List<HighlightBox> boxes = List.of();
@@ -71,10 +80,14 @@ public final class HighlightTargetTracker {
                     color = HIDEONWALL_COLOR;
                 } else if (config.hideyho && entity instanceof RemotePlayer && isHideyho(entity)) {
                     color = HIDEYHO_COLOR;
+                } else if (config.duplico && isDuplico(entity)) {
+                    color = DUPLICO_COLOR;
                 }
             } else if (safari && zone == SafariZone.CAVERN) {
                 String label = entityName(entity) + " " + nearbyLabel(entity);
-                if (config.snoozleWalls && entity instanceof Sniffer && containsName(label, "snoozle")) {
+                if (config.rockmite && isRockmite(entity)) {
+                    color = ROCKMITE_COLOR;
+                } else if (config.snoozleWalls && entity instanceof Sniffer && containsName(label, "snoozle")) {
                     color = SNOOZLE_COLOR;
                 } else if (config.scrappy && entity instanceof RemotePlayer && containsName(label, "scrappy")) {
                     color = SCRAPPY_COLOR;
@@ -118,12 +131,14 @@ public final class HighlightTargetTracker {
 
     private static boolean isHideonwall(Entity entity) {
         if (entity instanceof Shulker shulker && shulker.getColor() == DyeColor.PURPLE) return true;
-        return entity instanceof Display.ItemDisplay display && displayItem(display).is(Items.PURPLE_SHULKER_BOX);
+        return entity instanceof Display.ItemDisplay display
+                && displayItem(display).is(Items.DYED_SHULKER_BOX.purple());
     }
 
     private static boolean isHideonfloor(Entity entity) {
         if (entity instanceof Shulker shulker && shulker.getColor() == DyeColor.GREEN) return true;
-        return entity instanceof Display.ItemDisplay display && displayItem(display).is(Items.GREEN_SHULKER_BOX);
+        return entity instanceof Display.ItemDisplay display
+                && displayItem(display).is(Items.DYED_SHULKER_BOX.green());
     }
 
     private static boolean isHideyho(Entity entity) {
@@ -132,6 +147,37 @@ public final class HighlightTargetTracker {
             if (HIDEYHO_TEXTURE.equals(property.value())) return true;
         }
         return containsName(entityName(entity), "hideyho");
+    }
+
+    private static boolean isDuplico(Entity entity) {
+        if (!(entity instanceof Display.ItemDisplay display)
+                || display.getPosRotInterpolationDuration() != 3) return false;
+        ItemStack stack = displayItem(display);
+        return !stack.is(Items.PLAYER_HEAD) && !stack.is(Items.DYED_SHULKER_BOX.purple());
+    }
+
+    private static boolean isRockmite(Entity entity) {
+        if (!(entity instanceof Display.ItemDisplay display)
+                || display.getPosRotInterpolationDuration() != 0) return false;
+        ItemStack stack = displayItem(display);
+        if (!stack.is(Items.PLAYER_HEAD)) return false;
+
+        ResolvableProfile profile = stack.get(DataComponents.PROFILE);
+        if (profile == null) return false;
+        for (Property property : profile.partialProfile().properties().get("textures")) {
+            if (property != null && textureContains(property.value(), ROCKMITE_TEXTURE_HASH)) return true;
+        }
+        return false;
+    }
+
+    private static boolean textureContains(String encodedTexture, String expectedHash) {
+        if (encodedTexture == null || encodedTexture.isBlank()) return false;
+        try {
+            String decoded = new String(Base64.getDecoder().decode(encodedTexture), StandardCharsets.UTF_8);
+            return decoded.toLowerCase(Locale.ROOT).contains(expectedHash);
+        } catch (IllegalArgumentException ignored) {
+            return false;
+        }
     }
 
     private static boolean isFloorDropDisplay(Entity entity) {
