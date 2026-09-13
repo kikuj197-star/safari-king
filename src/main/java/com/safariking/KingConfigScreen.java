@@ -58,17 +58,21 @@ public final class KingConfigScreen extends Screen {
                 value -> config.hideonwall = value);
         addFeature(left, firstY + 56, columnWidth, "Haunted: Hideyho", config.hideyho,
                 value -> config.hideyho = value);
-        addFeature(left, firstY + 80, columnWidth, "Cavern: Snoozle", config.snoozleWalls,
-                value -> config.snoozleWalls = value);
-        addFeature(left, firstY + 104, columnWidth, "Cavern: Scrappy", config.scrappy,
-                value -> config.scrappy = value);
-
-        addFeature(right, firstY + 32, columnWidth, "Torrhus: Pangolin", config.pangolin,
-                value -> config.pangolin = value);
-        addFeature(right, firstY + 56, columnWidth, "Forest: Hideonfloor", config.hideonfloor,
+        addFeature(left, firstY + 80, columnWidth, "Haunted: Duplico", config.duplico,
+                value -> config.duplico = value);
+        addFeature(left, firstY + 104, columnWidth, "Forest: Hideonfloor", config.hideonfloor,
                 value -> config.hideonfloor = value);
-        addFeature(right, firstY + 80, columnWidth, "Current Safari biome: Floor Drops", config.floorDrops,
+        addFeature(left, firstY + 128, columnWidth, "Current Safari biome: Floor Drops", config.floorDrops,
                 value -> config.floorDrops = value);
+
+        addFeature(right, firstY + 32, columnWidth, "Cavern: Snoozle", config.snoozleWalls,
+                value -> config.snoozleWalls = value);
+        addFeature(right, firstY + 56, columnWidth, "Cavern: Scrappy", config.scrappy,
+                value -> config.scrappy = value);
+        addFeature(right, firstY + 80, columnWidth, "Cavern: Rockmite", config.rockmite,
+                value -> config.rockmite = value);
+        addFeature(right, firstY + 104, columnWidth, "Torrhus: Pangolin", config.pangolin,
+                value -> config.pangolin = value);
 
         featureButtons.forEach(button -> button.active = master.getValue());
 
@@ -94,6 +98,6 @@ public final class KingConfigScreen extends Screen {
 
     @Override
     public void onClose() {
-        minecraft.setScreen(parent);
+        minecraft.gui.setScreen(parent);
     }
 }
