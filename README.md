@@ -1,6 +1,6 @@
 # Safari King
 
-Client-side visual enhancements for Minecraft 26.2 on Hypixel SkyBlock.
+Client-side visual enhancements for Minecraft 26.1.2 on Hypixel SkyBlock.
 
 Features are location-gated and only inspect entities and chunks already sent
 to the client:

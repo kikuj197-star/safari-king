@@ -139,14 +139,12 @@ public final class HighlightTargetTracker {
 
     private static boolean isHideonwall(Entity entity) {
         if (entity instanceof Shulker shulker && shulker.getColor() == DyeColor.PURPLE) return true;
-        return entity instanceof Display.ItemDisplay display
-                && displayItem(display).is(Items.DYED_SHULKER_BOX.purple());
+        return entity instanceof Display.ItemDisplay display && displayItem(display).is(Items.PURPLE_SHULKER_BOX);
     }
 
     private static boolean isHideonfloor(Entity entity) {
         if (entity instanceof Shulker shulker && shulker.getColor() == DyeColor.GREEN) return true;
-        return entity instanceof Display.ItemDisplay display
-                && displayItem(display).is(Items.DYED_SHULKER_BOX.green());
+        return entity instanceof Display.ItemDisplay display && displayItem(display).is(Items.GREEN_SHULKER_BOX);
     }
 
     private static boolean isHideonleaf(Entity entity) {
@@ -171,7 +169,7 @@ public final class HighlightTargetTracker {
         if (!(entity instanceof Display.ItemDisplay display)
                 || display.getPosRotInterpolationDuration() != 3) return false;
         ItemStack stack = displayItem(display);
-        return !stack.is(Items.PLAYER_HEAD) && !stack.is(Items.DYED_SHULKER_BOX.purple());
+        return !stack.is(Items.PLAYER_HEAD) && !stack.is(Items.PURPLE_SHULKER_BOX);
     }
 
     private static boolean isRockmite(Entity entity) {

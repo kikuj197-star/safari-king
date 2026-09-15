@@ -39,7 +39,7 @@ public final class SafariKingMod implements ClientModInitializer {
 
     private static int openConfig() {
         Minecraft client = Minecraft.getInstance();
-        client.execute(() -> client.gui.setScreen(new KingConfigScreen(client.gui.screen())));
+        client.execute(() -> client.setScreen(new KingConfigScreen(client.screen)));
         return 1;
     }
 
