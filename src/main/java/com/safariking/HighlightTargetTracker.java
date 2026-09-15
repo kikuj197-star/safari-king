@@ -61,7 +61,6 @@ public final class HighlightTargetTracker {
         boolean safari = KingLocationTracker.isSafari();
         boolean galatea = KingLocationTracker.isGalatea();
         boolean torrhus = KingLocationTracker.isTorrhus();
-        boolean pangolinArea = KingLocationTracker.isPangolinHideaway(client);
         if (!safari && !galatea && !torrhus) {
             reset();
             return;
@@ -102,11 +101,12 @@ public final class HighlightTargetTracker {
                 }
             } else if (galatea && config.hideonleaf && isHideonleaf(entity)) {
                 color = HIDEONLEAF_COLOR;
-            } else if (torrhus && config.hideonsun && isHideonsun(entity)) {
-                color = HIDEONSUN_COLOR;
-            } else if (pangolinArea && config.pangolin) {
-                String label = entityName(entity) + " " + nearbyLabel(entity);
-                if (entity instanceof Armadillo && containsName(label, "pangolin")) color = PANGOLIN_COLOR;
+            } else if (torrhus) {
+                if (config.hideonsun && isHideonsun(entity)) {
+                    color = HIDEONSUN_COLOR;
+                } else if (config.pangolin && entity instanceof Armadillo) {
+                    color = PANGOLIN_COLOR;
+                }
             }
 
             if (color != 0) {

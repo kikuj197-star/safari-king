@@ -10,7 +10,7 @@ to the client:
 - Forest Safari: Hideonfloor
 - Current Critter Safari biome: Floor Drop String displays
 - Galatea: Hideonleaf
-- Torrhus Canyon: Hideonsun and Pangolins in Pangolin Hideaways
+- Torrhus Canyon: Hideonsun and Pangolins
 
 Use `/safariking` or Mod Menu to configure individual helpers.
 
