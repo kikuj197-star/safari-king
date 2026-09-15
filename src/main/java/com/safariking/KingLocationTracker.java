@@ -71,19 +71,6 @@ public final class KingLocationTracker {
         return safariZone;
     }
 
-    public static boolean isPangolinHideaway(Minecraft client) {
-        if (!torrhus || client.player == null) return false;
-        BlockPos pos = client.player.blockPosition();
-        return horizontalDistanceSquared(pos, -551, 232) <= 48 * 48
-                || horizontalDistanceSquared(pos, -725, 220) <= 48 * 48;
-    }
-
-    private static int horizontalDistanceSquared(BlockPos pos, int x, int z) {
-        int dx = pos.getX() - x;
-        int dz = pos.getZ() - z;
-        return dx * dx + dz * dz;
-    }
-
     public static void reset() {
         safari = false;
         galatea = false;
