@@ -10,8 +10,8 @@ derived from the SkyHanni data repository:
 Entity and block representations were independently implemented after
 cross-checking the open-source Skyblocker and QCloudy_Addition projects.
 
-The Rockmite Mound texture identifier and Duplico representation rules were
-cross-checked against Skyblocker:
+The Rockmite Mound texture identifier, Duplico representation rules, and the
+Galatea/Torrhus Shulker color rules were cross-checked against Skyblocker:
 
 - https://github.com/SkyblockerMod/Skyblocker
 - Copyright (c) Skyblocker contributors
