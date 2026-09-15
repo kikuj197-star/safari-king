@@ -32,6 +32,8 @@ public final class HighlightTargetTracker {
     public static final int SNOOZLE_COLOR = 0x55FF55;
     public static final int SCRAPPY_COLOR = 0xFF5C70;
     public static final int ROCKMITE_COLOR = 0x55FFFF;
+    public static final int HIDEONLEAF_COLOR = 0x55FF55;
+    public static final int HIDEONSUN_COLOR = 0xFFAA00;
     public static final int PANGOLIN_COLOR = 0xFF9B42;
     public static final int HIDEONFLOOR_COLOR = 0xFF4DFF;
     public static final int FLOOR_DROP_COLOR = 0x35E6FF;
@@ -57,8 +59,10 @@ public final class HighlightTargetTracker {
 
         KingConfig config = SafariKingMod.CONFIG;
         boolean safari = KingLocationTracker.isSafari();
+        boolean galatea = KingLocationTracker.isGalatea();
+        boolean torrhus = KingLocationTracker.isTorrhus();
         boolean pangolinArea = KingLocationTracker.isPangolinHideaway(client);
-        if (!safari && !pangolinArea) {
+        if (!safari && !galatea && !torrhus) {
             reset();
             return;
         }
@@ -96,6 +100,10 @@ public final class HighlightTargetTracker {
                 if (isHideonfloor(entity)) {
                     color = HIDEONFLOOR_COLOR;
                 }
+            } else if (galatea && config.hideonleaf && isHideonleaf(entity)) {
+                color = HIDEONLEAF_COLOR;
+            } else if (torrhus && config.hideonsun && isHideonsun(entity)) {
+                color = HIDEONSUN_COLOR;
             } else if (pangolinArea && config.pangolin) {
                 String label = entityName(entity) + " " + nearbyLabel(entity);
                 if (entity instanceof Armadillo && containsName(label, "pangolin")) color = PANGOLIN_COLOR;
@@ -139,6 +147,16 @@ public final class HighlightTargetTracker {
         if (entity instanceof Shulker shulker && shulker.getColor() == DyeColor.GREEN) return true;
         return entity instanceof Display.ItemDisplay display
                 && displayItem(display).is(Items.DYED_SHULKER_BOX.green());
+    }
+
+    private static boolean isHideonleaf(Entity entity) {
+        return entity instanceof Shulker shulker && shulker.getColor() == DyeColor.GREEN;
+    }
+
+    private static boolean isHideonsun(Entity entity) {
+        if (!(entity instanceof Shulker shulker)) return false;
+        DyeColor color = shulker.getColor();
+        return color == DyeColor.YELLOW || color == DyeColor.ORANGE || color == DyeColor.BROWN;
     }
 
     private static boolean isHideyho(Entity entity) {

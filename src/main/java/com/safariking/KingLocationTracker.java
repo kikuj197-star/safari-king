@@ -12,6 +12,7 @@ import java.util.Locale;
 /** Location authority comes from Hypixel's official Mod API. */
 public final class KingLocationTracker {
     private static volatile boolean safari;
+    private static volatile boolean galatea;
     private static volatile boolean torrhus;
     private static volatile SafariZone safariZone = SafariZone.UNKNOWN;
 
@@ -28,6 +29,7 @@ public final class KingLocationTracker {
         String mode = packet.getMode().orElse("").toLowerCase(Locale.ROOT);
         String map = packet.getMap().orElse("").toLowerCase(Locale.ROOT);
         safari = mode.equals("safari") || map.contains("critter safari") || map.equals("safari");
+        galatea = mode.equals("foraging_2") || map.contains("moonglade marsh") || map.contains("galatea");
         torrhus = mode.equals("foraging_3") || map.contains("torrhus canyon");
         if (!safari) safariZone = SafariZone.UNKNOWN;
         HighlightTargetTracker.reset();
@@ -61,6 +63,10 @@ public final class KingLocationTracker {
         return torrhus;
     }
 
+    public static boolean isGalatea() {
+        return galatea;
+    }
+
     public static SafariZone safariZone() {
         return safariZone;
     }
@@ -80,6 +86,7 @@ public final class KingLocationTracker {
 
     public static void reset() {
         safari = false;
+        galatea = false;
         torrhus = false;
         safariZone = SafariZone.UNKNOWN;
         HighlightTargetTracker.reset();

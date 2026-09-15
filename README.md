@@ -9,7 +9,8 @@ to the client:
 - Cavern Safari: Snoozle entities already sent to the client, Scrappy, and Rockmite Mounds
 - Forest Safari: Hideonfloor
 - Current Critter Safari biome: Floor Drop String displays
-- Torrhus Canyon Pangolin Hideaways: Pangolins
+- Galatea: Hideonleaf
+- Torrhus Canyon: Hideonsun and Pangolins in Pangolin Hideaways
 
 Use `/safariking` or Mod Menu to configure individual helpers.
 

@@ -21,6 +21,8 @@ public final class KingConfig {
     public boolean snoozleWalls = true;
     public boolean scrappy = true;
     public boolean rockmite = true;
+    public boolean hideonleaf = true;
+    public boolean hideonsun = true;
     public boolean pangolin = true;
     public boolean hideonfloor = true;
     public boolean floorDrops = true;
