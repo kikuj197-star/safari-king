@@ -4,6 +4,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.Minecraft;
 import org.slf4j.Logger;
@@ -20,6 +21,9 @@ public final class SafariKingMod implements ClientModInitializer {
         WorldHighlightRenderer.register();
 
         ClientTickEvents.END_CLIENT_TICK.register(SafariKingMod::tick);
+        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+            if (!overlay) CrystalHollowsChestTracker.onGameMessage(message.getString());
+        });
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             KingLocationTracker.reset();
         });
@@ -47,8 +51,10 @@ public final class SafariKingMod implements ClientModInitializer {
         KingLocationTracker.tick(client);
         if (!CONFIG.enabled) {
             HighlightTargetTracker.reset();
+            CrystalHollowsChestTracker.reset();
             return;
         }
         HighlightTargetTracker.tick(client);
+        CrystalHollowsChestTracker.tick(client);
     }
 }

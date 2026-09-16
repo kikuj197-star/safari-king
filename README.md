@@ -11,6 +11,7 @@ to the client:
 - Current Critter Safari biome: Floor Drop String displays
 - Galatea: Hideonleaf
 - Torrhus Canyon: Hideonsun and Pangolins
+- Crystal Hollows: static structure reward chests; powder-mining chests are excluded
 
 Use `/safariking` or Mod Menu to configure individual helpers.
 

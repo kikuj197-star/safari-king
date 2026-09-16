@@ -26,6 +26,8 @@ public final class WorldHighlightRenderer {
 
         List<HighlightTargetTracker.HighlightBox> entityBoxes = HighlightTargetTracker.boxes();
         if (!entityBoxes.isEmpty()) submitBoxes(context, entityBoxes, RenderTypes.LINES_TRANSLUCENT);
+        List<HighlightTargetTracker.HighlightBox> chestBoxes = CrystalHollowsChestTracker.boxes();
+        if (!chestBoxes.isEmpty()) submitBoxes(context, chestBoxes, RenderTypes.LINES_TRANSLUCENT);
     }
 
     private static void submitBoxes(LevelRenderContext context,

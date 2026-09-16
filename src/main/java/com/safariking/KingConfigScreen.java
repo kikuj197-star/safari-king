@@ -39,7 +39,7 @@ public final class KingConfigScreen extends Screen {
         addRenderableWidget(new MultiLineTextWidget(
                 20,
                 42,
-                Component.literal("Highlights only run in their matching Safari biome, Galatea, or Torrhus area."),
+                Component.literal("Highlights only run in their matching Safari biome, Galatea, Torrhus, or Crystal Hollows."),
                 font).setMaxWidth(width - 40).setCentered(true));
 
         CycleButton<Boolean> master = addRenderableWidget(CycleButton.onOffBuilder(config.enabled).create(
@@ -77,6 +77,8 @@ public final class KingConfigScreen extends Screen {
                 value -> config.pangolin = value);
         addFeature(right, firstY + 128, columnWidth, "Torrhus: Hideonsun", config.hideonsun,
                 value -> config.hideonsun = value);
+        addFeature(right, firstY + 152, columnWidth, "Crystal Hollows: Structure Chests",
+                config.crystalHollowsStructureChests, value -> config.crystalHollowsStructureChests = value);
 
         featureButtons.forEach(button -> button.active = master.getValue());
 
@@ -96,6 +98,7 @@ public final class KingConfigScreen extends Screen {
                     setter.accept(value);
                     SafariKingMod.CONFIG.save();
                     HighlightTargetTracker.reset();
+                    CrystalHollowsChestTracker.reset();
                 }));
         featureButtons.add(button);
     }
