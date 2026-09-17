@@ -36,7 +36,7 @@ public final class KingLocationTracker {
         crystalHollows = mode.equals("crystal_hollows") || map.contains("crystal hollows");
         glaciteMineshaft = mode.equals("mineshaft") || map.contains("glacite mineshaft");
         if (!safari) safariZone = SafariZone.UNKNOWN;
-        HighlightTargetTracker.reset();
+        HighlightTargetTracker.resetSession();
     }
 
     public static void tick(Minecraft client) {
@@ -90,6 +90,6 @@ public final class KingLocationTracker {
         crystalHollows = false;
         glaciteMineshaft = false;
         safariZone = SafariZone.UNKNOWN;
-        HighlightTargetTracker.reset();
+        HighlightTargetTracker.resetSession();
     }
 }

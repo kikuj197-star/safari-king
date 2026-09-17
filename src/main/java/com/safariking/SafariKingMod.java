@@ -22,7 +22,11 @@ public final class SafariKingMod implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(SafariKingMod::tick);
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-            if (!overlay) CrystalHollowsChestTracker.onGameMessage(message.getString());
+            if (!overlay) {
+                String text = message.getString();
+                CrystalHollowsChestTracker.onGameMessage(text);
+                HighlightTargetTracker.onGameMessage(text);
+            }
         });
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             KingLocationTracker.reset();

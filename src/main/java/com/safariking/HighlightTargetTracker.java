@@ -3,6 +3,7 @@ package com.safariking;
 import com.mojang.authlib.properties.Property;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.RemotePlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Display;
@@ -22,10 +23,14 @@ import net.minecraft.world.phys.AABB;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class HighlightTargetTracker {
     public static final int HIDEONWALL_COLOR = 0xD050FF;
@@ -50,9 +55,12 @@ public final class HighlightTargetTracker {
 
     private static final String ROCKMITE_TEXTURE_HASH =
             "5dbaab74d1acd0abe9d04abe9928725de5d4495fcb63b647228caf6944c20800";
+    private static final Pattern CORPSE_LOOT_PATTERN = Pattern.compile(
+            "\\b(LAPIS|TUNGSTEN|UMBER|VANGUARD) CORPSE LOOT!");
 
     private static volatile Map<Integer, Integer> colors = Map.of();
     private static volatile List<HighlightBox> boxes = List.of();
+    private static final Set<BlockPos> openedCorpses = new HashSet<>();
 
     private HighlightTargetTracker() {
     }
@@ -142,9 +150,51 @@ public final class HighlightTargetTracker {
         return boxes;
     }
 
+    public static void onGameMessage(String message) {
+        if (!KingLocationTracker.isGlaciteMineshaft()) return;
+
+        Matcher matcher = CORPSE_LOOT_PATTERN.matcher(message.toUpperCase(Locale.ROOT));
+        if (!matcher.find()) return;
+
+        String expectedItemId = switch (matcher.group(1)) {
+            case "LAPIS" -> "LAPIS_ARMOR_HELMET";
+            case "TUNGSTEN" -> "MINERAL_HELMET";
+            case "UMBER" -> "ARMOR_OF_YOG_HELMET";
+            case "VANGUARD" -> "VANGUARD_HELMET";
+            default -> "";
+        };
+
+        Minecraft client = Minecraft.getInstance();
+        if (client.level == null || client.player == null) return;
+
+        ArmorStand nearest = null;
+        double nearestDistance = Double.MAX_VALUE;
+        for (Entity entity : client.level.entitiesForRendering()) {
+            if (!(entity instanceof ArmorStand stand)
+                    || openedCorpses.contains(stand.blockPosition())
+                    || !corpseItemId(stand).equals(expectedItemId)) continue;
+
+            double distance = stand.distanceToSqr(client.player);
+            if (distance < nearestDistance) {
+                nearest = stand;
+                nearestDistance = distance;
+            }
+        }
+
+        if (nearest != null) {
+            openedCorpses.add(nearest.blockPosition());
+            tick(client);
+        }
+    }
+
     public static void reset() {
         colors = Map.of();
         boxes = List.of();
+    }
+
+    public static void resetSession() {
+        openedCorpses.clear();
+        reset();
     }
 
     private static boolean isHideonwall(Entity entity) {
@@ -154,20 +204,22 @@ public final class HighlightTargetTracker {
     }
 
     private static int corpseColor(ArmorStand stand) {
-        if (stand.hasCustomName() || stand.isInvisible() || stand.showBasePlate()) return 0;
-
-        ItemStack helmet = stand.getItemBySlot(EquipmentSlot.HEAD);
-        CustomData customData = helmet.get(DataComponents.CUSTOM_DATA);
-        if (customData == null) return 0;
-
-        String itemId = customData.copyTag().getStringOr("id", "");
-        return switch (itemId) {
+        if (openedCorpses.contains(stand.blockPosition())) return 0;
+        return switch (corpseItemId(stand)) {
             case "LAPIS_ARMOR_HELMET" -> LAPIS_CORPSE_COLOR;
             case "MINERAL_HELMET" -> TUNGSTEN_CORPSE_COLOR;
             case "ARMOR_OF_YOG_HELMET" -> UMBER_CORPSE_COLOR;
             case "VANGUARD_HELMET" -> VANGUARD_CORPSE_COLOR;
             default -> 0;
         };
+    }
+
+    private static String corpseItemId(ArmorStand stand) {
+        if (stand.hasCustomName() || stand.isInvisible() || stand.showBasePlate()) return "";
+
+        ItemStack helmet = stand.getItemBySlot(EquipmentSlot.HEAD);
+        CustomData customData = helmet.get(DataComponents.CUSTOM_DATA);
+        return customData == null ? "" : customData.copyTag().getStringOr("id", "");
     }
 
     private static boolean isHideonfloor(Entity entity) {
