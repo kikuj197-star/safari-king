@@ -15,6 +15,7 @@ public final class KingLocationTracker {
     private static volatile boolean galatea;
     private static volatile boolean torrhus;
     private static volatile boolean crystalHollows;
+    private static volatile boolean glaciteMineshaft;
     private static volatile SafariZone safariZone = SafariZone.UNKNOWN;
 
     private KingLocationTracker() {
@@ -33,6 +34,7 @@ public final class KingLocationTracker {
         galatea = mode.equals("foraging_2") || map.contains("moonglade marsh") || map.contains("galatea");
         torrhus = mode.equals("foraging_3") || map.contains("torrhus canyon");
         crystalHollows = mode.equals("crystal_hollows") || map.contains("crystal hollows");
+        glaciteMineshaft = mode.equals("mineshaft") || map.contains("glacite mineshaft");
         if (!safari) safariZone = SafariZone.UNKNOWN;
         HighlightTargetTracker.reset();
     }
@@ -73,6 +75,10 @@ public final class KingLocationTracker {
         return crystalHollows;
     }
 
+    public static boolean isGlaciteMineshaft() {
+        return glaciteMineshaft;
+    }
+
     public static SafariZone safariZone() {
         return safariZone;
     }
@@ -82,6 +88,7 @@ public final class KingLocationTracker {
         galatea = false;
         torrhus = false;
         crystalHollows = false;
+        glaciteMineshaft = false;
         safariZone = SafariZone.UNKNOWN;
         HighlightTargetTracker.reset();
     }

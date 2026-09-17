@@ -7,6 +7,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.armadillo.Armadillo;
 import net.minecraft.world.entity.animal.sniffer.Sniffer;
 import net.minecraft.world.entity.decoration.ArmorStand;
@@ -14,6 +15,7 @@ import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.phys.AABB;
 
@@ -37,6 +39,10 @@ public final class HighlightTargetTracker {
     public static final int PANGOLIN_COLOR = 0xFF9B42;
     public static final int HIDEONFLOOR_COLOR = 0xFF4DFF;
     public static final int FLOOR_DROP_COLOR = 0x35E6FF;
+    public static final int LAPIS_CORPSE_COLOR = 0x5555FF;
+    public static final int TUNGSTEN_CORPSE_COLOR = 0xAAAAAA;
+    public static final int UMBER_CORPSE_COLOR = 0xFFAA00;
+    public static final int VANGUARD_CORPSE_COLOR = 0x55FFFF;
     public static final double FORCED_RENDER_DISTANCE = 128.0;
 
     private static final String HIDEYHO_TEXTURE =
@@ -61,7 +67,8 @@ public final class HighlightTargetTracker {
         boolean safari = KingLocationTracker.isSafari();
         boolean galatea = KingLocationTracker.isGalatea();
         boolean torrhus = KingLocationTracker.isTorrhus();
-        if (!safari && !galatea && !torrhus) {
+        boolean glaciteMineshaft = KingLocationTracker.isGlaciteMineshaft();
+        if (!safari && !galatea && !torrhus && !glaciteMineshaft) {
             reset();
             return;
         }
@@ -71,11 +78,14 @@ public final class HighlightTargetTracker {
         SafariZone zone = KingLocationTracker.safariZone();
 
         for (Entity entity : client.level.entitiesForRendering()) {
-            if (entity.isRemoved() || entity == client.player || entity instanceof ArmorStand
-                    || entity instanceof Display.TextDisplay) continue;
+            if (entity.isRemoved() || entity == client.player || entity instanceof Display.TextDisplay) continue;
 
             int color = 0;
-            if (config.floorDrops && safari && isSafariBiome(zone) && zoneAt(entity) == zone
+            if (glaciteMineshaft && config.glaciteMineshaftCorpses && entity instanceof ArmorStand stand) {
+                color = corpseColor(stand);
+            } else if (entity instanceof ArmorStand) {
+                continue;
+            } else if (config.floorDrops && safari && isSafariBiome(zone) && zoneAt(entity) == zone
                     && isFloorDropDisplay(entity)) {
                 color = FLOOR_DROP_COLOR;
             } else if (safari && zone == SafariZone.HAUNTED) {
@@ -141,6 +151,23 @@ public final class HighlightTargetTracker {
         if (entity instanceof Shulker shulker && shulker.getColor() == DyeColor.PURPLE) return true;
         return entity instanceof Display.ItemDisplay display
                 && displayItem(display).is(Items.DYED_SHULKER_BOX.purple());
+    }
+
+    private static int corpseColor(ArmorStand stand) {
+        if (stand.hasCustomName() || stand.isInvisible() || stand.showBasePlate()) return 0;
+
+        ItemStack helmet = stand.getItemBySlot(EquipmentSlot.HEAD);
+        CustomData customData = helmet.get(DataComponents.CUSTOM_DATA);
+        if (customData == null) return 0;
+
+        String itemId = customData.copyTag().getStringOr("id", "");
+        return switch (itemId) {
+            case "LAPIS_ARMOR_HELMET" -> LAPIS_CORPSE_COLOR;
+            case "MINERAL_HELMET" -> TUNGSTEN_CORPSE_COLOR;
+            case "ARMOR_OF_YOG_HELMET" -> UMBER_CORPSE_COLOR;
+            case "VANGUARD_HELMET" -> VANGUARD_CORPSE_COLOR;
+            default -> 0;
+        };
     }
 
     private static boolean isHideonfloor(Entity entity) {

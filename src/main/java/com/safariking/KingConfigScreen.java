@@ -39,7 +39,7 @@ public final class KingConfigScreen extends Screen {
         addRenderableWidget(new MultiLineTextWidget(
                 20,
                 42,
-                Component.literal("Highlights only run in their matching Safari biome, Galatea, Torrhus, or Crystal Hollows."),
+                Component.literal("Highlights only run in their matching Safari biome, Galatea, Torrhus, Crystal Hollows, or Glacite Mineshaft."),
                 font).setMaxWidth(width - 40).setCentered(true));
 
         CycleButton<Boolean> master = addRenderableWidget(CycleButton.onOffBuilder(config.enabled).create(
@@ -66,6 +66,8 @@ public final class KingConfigScreen extends Screen {
                 value -> config.floorDrops = value);
         addFeature(left, firstY + 152, columnWidth, "Galatea: Hideonleaf", config.hideonleaf,
                 value -> config.hideonleaf = value);
+        addFeature(left, firstY + 176, columnWidth, "Glacite Mineshaft: Corpses",
+                config.glaciteMineshaftCorpses, value -> config.glaciteMineshaftCorpses = value);
 
         addFeature(right, firstY + 32, columnWidth, "Cavern: Snoozle", config.snoozleWalls,
                 value -> config.snoozleWalls = value);

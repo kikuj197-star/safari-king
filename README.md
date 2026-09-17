@@ -12,6 +12,7 @@ to the client:
 - Galatea: Hideonleaf
 - Torrhus Canyon: Hideonsun and Pangolins
 - Crystal Hollows: static structure reward chests; powder-mining chests are excluded
+- Glacite Mineshafts: Lapis, Tungsten, Umber, and Vanguard corpses through walls
 
 Use `/safariking` or Mod Menu to configure individual helpers.
 
