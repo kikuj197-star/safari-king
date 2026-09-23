@@ -39,7 +39,7 @@ public final class KingConfigScreen extends Screen {
         addRenderableWidget(new MultiLineTextWidget(
                 20,
                 42,
-                Component.literal("Highlights only run in their matching Safari biome, Galatea, Torrhus, Crystal Hollows, or Glacite Mineshaft."),
+                Component.literal("Highlights only run in their matching Safari biome, mining area, hunting area, or Glacial Cave."),
                 font).setMaxWidth(width - 40).setCentered(true));
 
         CycleButton<Boolean> master = addRenderableWidget(CycleButton.onOffBuilder(config.enabled).create(
@@ -81,6 +81,8 @@ public final class KingConfigScreen extends Screen {
                 value -> config.hideonsun = value);
         addFeature(right, firstY + 152, columnWidth, "Crystal Hollows: Structure Chests",
                 config.crystalHollowsStructureChests, value -> config.crystalHollowsStructureChests = value);
+        addFeature(right, firstY + 176, columnWidth, "Glacial Cave: Frozen Treasures",
+                config.frozenTreasures, value -> config.frozenTreasures = value);
 
         featureButtons.forEach(button -> button.active = master.getValue());
 

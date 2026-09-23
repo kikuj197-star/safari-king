@@ -13,6 +13,7 @@ to the client:
 - Torrhus Canyon: Hideonsun and Pangolins
 - Crystal Hollows: static structure reward chests; powder-mining chests are excluded
 - Glacite Mineshafts: unopened Lapis, Tungsten, Umber, and Vanguard corpses through walls
+- Jerry's Workshop Glacial Cave: Frozen Treasures inside ice, visible through walls
 
 Use `/safariking` or Mod Menu to configure individual helpers.
 

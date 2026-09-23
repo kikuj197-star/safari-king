@@ -26,6 +26,7 @@ public final class KingConfig {
     public boolean pangolin = true;
     public boolean crystalHollowsStructureChests = true;
     public boolean glaciteMineshaftCorpses = true;
+    public boolean frozenTreasures = true;
     public boolean hideonfloor = true;
     public boolean floorDrops = true;
 

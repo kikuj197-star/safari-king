@@ -6,6 +6,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.scores.DisplaySlot;
+import net.minecraft.world.scores.Objective;
+import net.minecraft.world.scores.PlayerScoreEntry;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Scoreboard;
 
 import java.util.Locale;
 
@@ -16,6 +21,8 @@ public final class KingLocationTracker {
     private static volatile boolean torrhus;
     private static volatile boolean crystalHollows;
     private static volatile boolean glaciteMineshaft;
+    private static volatile boolean winterIsland;
+    private static volatile boolean glacialCave;
     private static volatile SafariZone safariZone = SafariZone.UNKNOWN;
 
     private KingLocationTracker() {
@@ -35,11 +42,14 @@ public final class KingLocationTracker {
         torrhus = mode.equals("foraging_3") || map.contains("torrhus canyon");
         crystalHollows = mode.equals("crystal_hollows") || map.contains("crystal hollows");
         glaciteMineshaft = mode.equals("mineshaft") || map.contains("glacite mineshaft");
+        winterIsland = mode.equals("winter") || map.contains("jerry's workshop");
+        glacialCave = false;
         if (!safari) safariZone = SafariZone.UNKNOWN;
         HighlightTargetTracker.resetSession();
     }
 
     public static void tick(Minecraft client) {
+        glacialCave = winterIsland && isInGlacialCave(client);
         if (!safari || client.player == null || client.level == null) {
             safariZone = SafariZone.UNKNOWN;
             return;
@@ -79,6 +89,10 @@ public final class KingLocationTracker {
         return glaciteMineshaft;
     }
 
+    public static boolean isGlacialCave() {
+        return glacialCave;
+    }
+
     public static SafariZone safariZone() {
         return safariZone;
     }
@@ -89,7 +103,26 @@ public final class KingLocationTracker {
         torrhus = false;
         crystalHollows = false;
         glaciteMineshaft = false;
+        winterIsland = false;
+        glacialCave = false;
         safariZone = SafariZone.UNKNOWN;
         HighlightTargetTracker.resetSession();
+    }
+
+    private static boolean isInGlacialCave(Minecraft client) {
+        if (client.level == null) return false;
+
+        Scoreboard scoreboard = client.level.getScoreboard();
+        Objective objective = scoreboard.getDisplayObjective(DisplaySlot.SIDEBAR);
+        if (objective == null) return false;
+
+        for (PlayerScoreEntry entry : scoreboard.listPlayerScores(objective)) {
+            PlayerTeam team = scoreboard.getPlayersTeam(entry.owner());
+            String line = team == null
+                    ? entry.owner()
+                    : team.getPlayerPrefix().getString() + team.getPlayerSuffix().getString();
+            if (line.toLowerCase(Locale.ROOT).contains("glacial cave")) return true;
+        }
+        return false;
     }
 }

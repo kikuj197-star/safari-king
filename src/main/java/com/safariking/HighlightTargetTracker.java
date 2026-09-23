@@ -18,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ResolvableProfile;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 
 import java.nio.charset.StandardCharsets;
@@ -48,6 +49,7 @@ public final class HighlightTargetTracker {
     public static final int TUNGSTEN_CORPSE_COLOR = 0xAAAAAA;
     public static final int UMBER_CORPSE_COLOR = 0xFFAA00;
     public static final int VANGUARD_CORPSE_COLOR = 0x55FFFF;
+    public static final int FROZEN_TREASURE_COLOR = 0x55FF55;
     public static final double FORCED_RENDER_DISTANCE = 128.0;
 
     private static final String HIDEYHO_TEXTURE =
@@ -76,7 +78,8 @@ public final class HighlightTargetTracker {
         boolean galatea = KingLocationTracker.isGalatea();
         boolean torrhus = KingLocationTracker.isTorrhus();
         boolean glaciteMineshaft = KingLocationTracker.isGlaciteMineshaft();
-        if (!safari && !galatea && !torrhus && !glaciteMineshaft) {
+        boolean glacialCave = KingLocationTracker.isGlacialCave();
+        if (!safari && !galatea && !torrhus && !glaciteMineshaft && !glacialCave) {
             reset();
             return;
         }
@@ -89,7 +92,12 @@ public final class HighlightTargetTracker {
             if (entity.isRemoved() || entity == client.player || entity instanceof Display.TextDisplay) continue;
 
             int color = 0;
-            if (glaciteMineshaft && config.glaciteMineshaftCorpses && entity instanceof ArmorStand stand) {
+            if (glacialCave && config.frozenTreasures && entity instanceof ArmorStand stand
+                    && isFrozenTreasure(stand)) {
+                color = FROZEN_TREASURE_COLOR;
+                BlockPos ice = stand.blockPosition().above(2);
+                nextBoxes.add(new HighlightBox(new AABB(ice).inflate(0.01), color));
+            } else if (glaciteMineshaft && config.glaciteMineshaftCorpses && entity instanceof ArmorStand stand) {
                 color = corpseColor(stand);
             } else if (entity instanceof ArmorStand) {
                 continue;
@@ -220,6 +228,24 @@ public final class HighlightTargetTracker {
         ItemStack helmet = stand.getItemBySlot(EquipmentSlot.HEAD);
         CustomData customData = helmet.get(DataComponents.CUSTOM_DATA);
         return customData == null ? "" : customData.copyTag().getStringOr("id", "");
+    }
+
+    private static boolean isFrozenTreasure(ArmorStand stand) {
+        ItemStack helmet = stand.getItemBySlot(EquipmentSlot.HEAD);
+        if (helmet.isEmpty()) return false;
+
+        int equippedItems = 0;
+        for (EquipmentSlot slot : new EquipmentSlot[]{
+                EquipmentSlot.MAINHAND, EquipmentSlot.FEET, EquipmentSlot.LEGS,
+                EquipmentSlot.CHEST, EquipmentSlot.HEAD, EquipmentSlot.OFFHAND}) {
+            if (!stand.getItemBySlot(slot).isEmpty()) equippedItems++;
+        }
+        if (equippedItems != 1) return false;
+        if (helmet.is(Items.PLAYER_HEAD) && helmet.getHoverName().getString().endsWith("Head")) return false;
+
+        BlockPos ice = stand.blockPosition().above(2);
+        return stand.level().getBlockState(ice).is(Blocks.ICE)
+                || stand.level().getBlockState(ice).is(Blocks.PACKED_ICE);
     }
 
     private static boolean isHideonfloor(Entity entity) {

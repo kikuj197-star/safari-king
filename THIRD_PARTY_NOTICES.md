@@ -7,6 +7,9 @@ derived from the SkyHanni data repository:
 - Copyright (c) 2022 hannibal2
 - Licensed under the MIT License
 
+The Frozen Treasure entity and ice-block identification rules were
+cross-checked against SkyHanni's Frozen Treasure Highlighter.
+
 Entity and block representations were independently implemented after
 cross-checking the open-source Skyblocker and QCloudy_Addition projects.
 
