@@ -5,10 +5,11 @@ import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.safariking.mixin.RenderPipelinesAccessor;
+import com.safariking.mixin.RenderTypeAccessor;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.LayeringTransform;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -41,7 +42,8 @@ public final class WorldHighlightRenderer {
     }
 
     private static RenderType createXrayLines() {
-        RenderPipeline pipeline = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
+        RenderPipeline pipeline = RenderPipelinesAccessor.safariking$register(
+                RenderPipeline.builder(RenderPipelinesAccessor.safariking$getLinesSnippet())
                 .withLocation(Identifier.fromNamespaceAndPath(SafariKingMod.MOD_ID, "xray_lines"))
                 .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH)
                 .withPrimitiveTopology(PrimitiveTopology.LINES)
@@ -50,7 +52,7 @@ public final class WorldHighlightRenderer {
         RenderSetup setup = RenderSetup.builder(pipeline)
                 .setLayeringTransform(LayeringTransform.NO_LAYERING)
                 .createRenderSetup();
-        return RenderType.create("safariking_xray_lines", setup);
+        return RenderTypeAccessor.safariking$create("safariking_xray_lines", setup);
     }
 
     private static void submitBoxes(LevelRenderContext context,

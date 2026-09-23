@@ -7,7 +7,9 @@
     "EntityGlowMixin",
     "EntityRenderDistanceMixin",
     "EntityTeamColorMixin",
-    "EntityRendererMixin"
+    "EntityRendererMixin",
+    "RenderPipelinesAccessor",
+    "RenderTypeAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

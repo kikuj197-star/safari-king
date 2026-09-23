@@ -14,7 +14,6 @@
   "mixins": [
     "safariking.mixins.json"
   ],
-  "accessWidener": "safariking.accesswidener",
   "depends": {
     "fabricloader": ">=0.19.3",
     "fabric-api": ">=0.155.2+26.2",
