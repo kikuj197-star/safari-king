@@ -1,18 +1,28 @@
 package com.safariking;
 
+import com.mojang.blaze3d.PrimitiveTopology;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.rendertype.LayeringTransform;
+import net.minecraft.client.renderer.rendertype.RenderSetup;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 import java.util.List;
+import java.util.Optional;
 
 public final class WorldHighlightRenderer {
+    private static final RenderType XRAY_LINES = createXrayLines();
+
     private WorldHighlightRenderer() {
     }
 
@@ -25,9 +35,22 @@ public final class WorldHighlightRenderer {
         if (!SafariKingMod.CONFIG.enabled || client.level == null || client.player == null) return;
 
         List<HighlightTargetTracker.HighlightBox> entityBoxes = HighlightTargetTracker.boxes();
-        if (!entityBoxes.isEmpty()) submitBoxes(context, entityBoxes, RenderTypes.LINES_TRANSLUCENT);
+        if (!entityBoxes.isEmpty()) submitBoxes(context, entityBoxes, XRAY_LINES);
         List<HighlightTargetTracker.HighlightBox> chestBoxes = CrystalHollowsChestTracker.boxes();
-        if (!chestBoxes.isEmpty()) submitBoxes(context, chestBoxes, RenderTypes.LINES_TRANSLUCENT);
+        if (!chestBoxes.isEmpty()) submitBoxes(context, chestBoxes, XRAY_LINES);
+    }
+
+    private static RenderType createXrayLines() {
+        RenderPipeline pipeline = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
+                .withLocation(Identifier.fromNamespaceAndPath(SafariKingMod.MOD_ID, "xray_lines"))
+                .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH)
+                .withPrimitiveTopology(PrimitiveTopology.LINES)
+                .withDepthStencilState(Optional.empty())
+                .build());
+        RenderSetup setup = RenderSetup.builder(pipeline)
+                .setLayeringTransform(LayeringTransform.NO_LAYERING)
+                .createRenderSetup();
+        return RenderType.create("safariking_xray_lines", setup);
     }
 
     private static void submitBoxes(LevelRenderContext context,

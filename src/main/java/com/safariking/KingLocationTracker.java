@@ -120,7 +120,8 @@ public final class KingLocationTracker {
             PlayerTeam team = scoreboard.getPlayersTeam(entry.owner());
             String line = team == null
                     ? entry.owner()
-                    : team.getPlayerPrefix().getString() + team.getPlayerSuffix().getString();
+                    : team.getPlayerPrefix().getString() + entry.owner()
+                    + team.getPlayerSuffix().getString();
             if (line.toLowerCase(Locale.ROOT).contains("glacial cave")) return true;
         }
         return false;
