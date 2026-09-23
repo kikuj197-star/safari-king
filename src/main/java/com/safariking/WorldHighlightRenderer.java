@@ -23,6 +23,7 @@ import java.util.Optional;
 
 public final class WorldHighlightRenderer {
     private static final RenderType XRAY_LINES = createXrayLines();
+    private static final RenderType XRAY_FILLED_BOX = createXrayFilledBox();
 
     private WorldHighlightRenderer() {
     }
@@ -37,6 +38,12 @@ public final class WorldHighlightRenderer {
 
         List<HighlightTargetTracker.HighlightBox> entityBoxes = HighlightTargetTracker.boxes();
         if (!entityBoxes.isEmpty()) submitBoxes(context, entityBoxes, XRAY_LINES);
+        List<HighlightTargetTracker.HighlightBox> frozenTreasureBoxes =
+                HighlightTargetTracker.frozenTreasureBoxes();
+        if (!frozenTreasureBoxes.isEmpty()) {
+            submitFilledBoxes(context, frozenTreasureBoxes, XRAY_FILLED_BOX);
+            submitBoxes(context, frozenTreasureBoxes, XRAY_LINES);
+        }
         List<HighlightTargetTracker.HighlightBox> chestBoxes = CrystalHollowsChestTracker.boxes();
         if (!chestBoxes.isEmpty()) submitBoxes(context, chestBoxes, XRAY_LINES);
     }
@@ -53,6 +60,59 @@ public final class WorldHighlightRenderer {
                 .setLayeringTransform(LayeringTransform.NO_LAYERING)
                 .createRenderSetup();
         return RenderTypeAccessor.safariking$create("safariking_xray_lines", setup);
+    }
+
+    private static RenderType createXrayFilledBox() {
+        RenderPipeline pipeline = RenderPipelinesAccessor.safariking$register(
+                RenderPipeline.builder(RenderPipelinesAccessor.safariking$getDebugFilledSnippet())
+                        .withLocation(Identifier.fromNamespaceAndPath(
+                                SafariKingMod.MOD_ID, "xray_filled_box"))
+                        .withDepthStencilState(Optional.empty())
+                        .build());
+        RenderSetup setup = RenderSetup.builder(pipeline).createRenderSetup();
+        return RenderTypeAccessor.safariking$create("safariking_xray_filled_box", setup);
+    }
+
+    private static void submitFilledBoxes(LevelRenderContext context,
+                                          List<HighlightTargetTracker.HighlightBox> boxes,
+                                          RenderType renderType) {
+        Vec3 camera = context.levelState().cameraRenderState.pos;
+        PoseStack pose = context.poseStack();
+        pose.pushPose();
+        pose.translate(-camera.x, -camera.y, -camera.z);
+        context.submitNodeCollector().submitCustomGeometry(pose, renderType,
+                (entry, buffer) -> {
+                    for (HighlightTargetTracker.HighlightBox box : boxes) {
+                        submitFilledBox(entry, buffer, box.bounds(), 0x5055FF55);
+                    }
+                });
+        pose.popPose();
+    }
+
+    private static void submitFilledBox(PoseStack.Pose pose, VertexConsumer buffer,
+                                        AABB box, int color) {
+        float x0 = (float) box.minX;
+        float y0 = (float) box.minY;
+        float z0 = (float) box.minZ;
+        float x1 = (float) box.maxX;
+        float y1 = (float) box.maxY;
+        float z1 = (float) box.maxZ;
+
+        addQuad(pose, buffer, color, x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y1, z1);
+        addQuad(pose, buffer, color, x1, y0, z0, x0, y0, z0, x0, y1, z0, x1, y1, z0);
+        addQuad(pose, buffer, color, x0, y0, z0, x0, y0, z1, x0, y1, z1, x0, y1, z0);
+        addQuad(pose, buffer, color, x1, y0, z1, x1, y0, z0, x1, y1, z0, x1, y1, z1);
+        addQuad(pose, buffer, color, x0, y1, z1, x1, y1, z1, x1, y1, z0, x0, y1, z0);
+        addQuad(pose, buffer, color, x0, y0, z0, x1, y0, z0, x1, y0, z1, x0, y0, z1);
+    }
+
+    private static void addQuad(PoseStack.Pose pose, VertexConsumer buffer, int color,
+                                float ax, float ay, float az, float bx, float by, float bz,
+                                float cx, float cy, float cz, float dx, float dy, float dz) {
+        buffer.addVertex(pose, ax, ay, az).setColor(color);
+        buffer.addVertex(pose, bx, by, bz).setColor(color);
+        buffer.addVertex(pose, cx, cy, cz).setColor(color);
+        buffer.addVertex(pose, dx, dy, dz).setColor(color);
     }
 
     private static void submitBoxes(LevelRenderContext context,

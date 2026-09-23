@@ -93,6 +93,10 @@ public final class KingLocationTracker {
         return glacialCave;
     }
 
+    public static boolean isWinterIsland() {
+        return winterIsland;
+    }
+
     public static SafariZone safariZone() {
         return safariZone;
     }

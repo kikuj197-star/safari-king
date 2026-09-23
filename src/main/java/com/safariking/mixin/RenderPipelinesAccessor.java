@@ -13,6 +13,11 @@ public interface RenderPipelinesAccessor {
         throw new AssertionError();
     }
 
+    @Accessor("DEBUG_FILLED_SNIPPET")
+    static RenderPipeline.Snippet safariking$getDebugFilledSnippet() {
+        throw new AssertionError();
+    }
+
     @Invoker("register")
     static RenderPipeline safariking$register(RenderPipeline pipeline) {
         throw new AssertionError();

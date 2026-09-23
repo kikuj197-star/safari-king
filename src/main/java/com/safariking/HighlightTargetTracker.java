@@ -62,6 +62,7 @@ public final class HighlightTargetTracker {
 
     private static volatile Map<Integer, Integer> colors = Map.of();
     private static volatile List<HighlightBox> boxes = List.of();
+    private static volatile List<HighlightBox> frozenTreasureBoxes = List.of();
     private static final Set<BlockPos> openedCorpses = new HashSet<>();
 
     private HighlightTargetTracker() {
@@ -78,25 +79,27 @@ public final class HighlightTargetTracker {
         boolean galatea = KingLocationTracker.isGalatea();
         boolean torrhus = KingLocationTracker.isTorrhus();
         boolean glaciteMineshaft = KingLocationTracker.isGlaciteMineshaft();
-        boolean glacialCave = KingLocationTracker.isGlacialCave();
-        if (!safari && !galatea && !torrhus && !glaciteMineshaft && !glacialCave) {
+        boolean winterIsland = KingLocationTracker.isWinterIsland();
+        if (!safari && !galatea && !torrhus && !glaciteMineshaft && !winterIsland) {
             reset();
             return;
         }
 
         Map<Integer, Integer> nextColors = new HashMap<>();
         List<HighlightBox> nextBoxes = new ArrayList<>();
+        List<HighlightBox> nextFrozenTreasureBoxes = new ArrayList<>();
         SafariZone zone = KingLocationTracker.safariZone();
 
         for (Entity entity : client.level.entitiesForRendering()) {
             if (entity.isRemoved() || entity == client.player || entity instanceof Display.TextDisplay) continue;
 
             int color = 0;
-            if (glacialCave && config.frozenTreasures && entity instanceof ArmorStand stand
+            if (winterIsland && config.frozenTreasures && entity instanceof ArmorStand stand
                     && isFrozenTreasure(stand)) {
-                color = FROZEN_TREASURE_COLOR;
                 BlockPos ice = stand.blockPosition().above(2);
-                nextBoxes.add(new HighlightBox(new AABB(ice).inflate(0.01), color));
+                nextFrozenTreasureBoxes.add(new HighlightBox(
+                        new AABB(ice).inflate(0.002), FROZEN_TREASURE_COLOR));
+                continue;
             } else if (glaciteMineshaft && config.glaciteMineshaftCorpses && entity instanceof ArmorStand stand) {
                 color = corpseColor(stand);
             } else if (entity instanceof ArmorStand) {
@@ -143,6 +146,7 @@ public final class HighlightTargetTracker {
 
         colors = Map.copyOf(nextColors);
         boxes = List.copyOf(nextBoxes);
+        frozenTreasureBoxes = List.copyOf(nextFrozenTreasureBoxes);
     }
 
     public static int colorFor(Entity entity) {
@@ -156,6 +160,10 @@ public final class HighlightTargetTracker {
 
     public static List<HighlightBox> boxes() {
         return boxes;
+    }
+
+    public static List<HighlightBox> frozenTreasureBoxes() {
+        return frozenTreasureBoxes;
     }
 
     public static void onGameMessage(String message) {
@@ -198,6 +206,7 @@ public final class HighlightTargetTracker {
     public static void reset() {
         colors = Map.of();
         boxes = List.of();
+        frozenTreasureBoxes = List.of();
     }
 
     public static void resetSession() {
