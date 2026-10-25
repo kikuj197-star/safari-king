@@ -68,3 +68,10 @@ tasks.named('test') {
     failOnNoDiscoveredTests = false
 }
 check.dependsOn testParser
+
+tasks.register('testPartyProgress', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.safariking.stats.SafariPartyProgressTest'
+}
+check.dependsOn testPartyProgress

@@ -75,9 +75,13 @@ public final class KingConfigScreen extends Screen {
             toggle(3, "Region done messages", () -> config.announceRegionCompletion,
                     value -> config.announceRegionCompletion = value,
                     "Announce a completed region once, with elapsed time.");
+            toggle(4, "Teammate progress", () -> config.showPartyProgress, value -> {
+                config.showPartyProgress = value;
+                com.safariking.stats.SafariPartyTracker.reset();
+            }, "Up to 3 teammates: current biome and shared run progress. * means last seen within 30 seconds.");
             Button editor = Button.builder(Component.literal("Move & resize HUD"), button ->
                     minecraft.gui.setScreen(new SafariHudEditorScreen(this)))
-                    .bounds(left + 10, 153, panelWidth - 20, 20).build();
+                    .bounds(left + 10, 178, panelWidth - 20, 20).build();
             editor.setTooltip(Tooltip.create(Component.literal("Drag to move. Scroll to resize from 50% to 250%.")));
             addRenderableWidget(editor);
         } else if (page == 1) {
@@ -137,12 +141,12 @@ public final class KingConfigScreen extends Screen {
         graphics.text(font, page == 0 ? "SAFARI STATISTICS" : page == 1 ? "SAFARI VISUAL HELPERS" : "EXPLORATION HELPERS",
                 left + 12, 91, TEAL, false);
 
-        if (page == 0 && height >= 310) {
-            graphics.text(font, SafariCritterStatsMod.STATS.totalPartyMessage(), left + 12, 188, GOLD, false);
-            graphics.text(font, "!miss [c/f/h/i]   !total   !prog", left + 12, 203, MUTED, false);
+        if (page == 0 && height >= 335) {
+            graphics.text(font, SafariCritterStatsMod.STATS.totalPartyMessage(), left + 12, 213, GOLD, false);
+            graphics.text(font, "!miss [c/f/h/i]   !total   !prog", left + 12, 228, MUTED, false);
             int row = 0;
             for (CritterRegion region : CritterRegion.values()) {
-                int y = 224 + row++ * 21;
+                int y = 249 + row++ * 21;
                 int total = region.critters().size();
                 int caught = total - SafariCritterStatsMod.STATS.missingCritters(region).size();
                 if (y + 17 > height - 53) break;

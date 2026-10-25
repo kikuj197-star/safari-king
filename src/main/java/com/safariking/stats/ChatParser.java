@@ -5,6 +5,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class ChatParser {
+    private static final Pattern LOOT_SHARE_PLAYER = Pattern.compile(
+        "^LOOT SHARE! .+? Shard from (?:\\[[^\\]]+\\] )?([A-Za-z0-9_]{1,16}) (?:catching|finding) .+!$",
+        Pattern.CASE_INSENSITIVE);
     private static final Pattern CAPTURE = Pattern.compile(
         "^CAPTURE! You caught (?:an? )?(?:SPARKLING )?(.+?) and "
             + "(?:gained|received) (?:a Rainbow Feather and )?"
@@ -25,6 +28,12 @@ public final class ChatParser {
         Pattern.CASE_INSENSITIVE);
 
     private ChatParser() {}
+
+    public static Optional<String> lootSharePlayer(String message) {
+        if (parse(message).isEmpty()) return Optional.empty();
+        Matcher matcher = LOOT_SHARE_PLAYER.matcher(ChatText.plain(message));
+        return matcher.matches() ? Optional.of(matcher.group(1)) : Optional.empty();
+    }
 
     public static Optional<CaptureEvent> parse(String message) {
         if (message == null) return Optional.empty();

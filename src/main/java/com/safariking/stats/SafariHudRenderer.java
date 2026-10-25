@@ -85,6 +85,17 @@ public final class SafariHudRenderer {
             }
         }
 
+        List<SafariPartyProgress.Row> teammates = SafariPartyTracker.rows();
+        if (!teammates.isEmpty()) {
+            lines.add(new HudLine("Party - shared progress", GRAY));
+            boolean lastSeen = false;
+            for (SafariPartyProgress.Row teammate : teammates) {
+                lines.add(new HudLine(teammate.text(),
+                    teammate.total() > 0 && teammate.caught() == teammate.total() ? GREEN : zoneColor(teammate.zone())));
+                lastSeen |= teammate.lastSeen();
+            }
+            if (lastSeen) lines.add(new HudLine("* Last seen (up to 30s)", GRAY));
+        }
         return layout(font, lines);
     }
 
@@ -97,7 +108,11 @@ public final class SafariHudRenderer {
             new HudLine("- Gimmiegold", WHITE),
             new HudLine("- Hideonwall", WHITE),
             new HudLine("- Hideyho", WHITE),
-            new HudLine("- Doomspiral", WHITE));
+            new HudLine("- Doomspiral", WHITE),
+            new HudLine("Party - shared progress", GRAY),
+            new HudLine("PlayerOne: Haunted 4/10", 0xFFFF55FF),
+            new HudLine("PlayerTwo: Icy 6/9", 0xFF55FFFF),
+            new HudLine("PlayerThree: Cavern 9/9", GREEN));
         return layout(font, lines);
     }
 

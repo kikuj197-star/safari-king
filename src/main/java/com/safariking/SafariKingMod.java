@@ -18,6 +18,7 @@ public final class SafariKingMod implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         KingLocationTracker.initialize();
+        com.safariking.stats.SafariPartyTracker.initialize();
         WorldHighlightRenderer.register();
 
         ClientTickEvents.END_CLIENT_TICK.register(SafariKingMod::tick);
@@ -54,6 +55,7 @@ public final class SafariKingMod implements ClientModInitializer {
     private static void tick(Minecraft client) {
         KingLocationTracker.tick(client);
         com.safariking.stats.SafariZoneTracker.tick();
+        com.safariking.stats.SafariPartyTracker.tick(client);
         com.safariking.stats.PartyMessageDispatcher.tick();
         if (!CONFIG.enabled) {
             HighlightTargetTracker.reset();
