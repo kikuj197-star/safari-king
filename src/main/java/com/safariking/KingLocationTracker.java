@@ -35,6 +35,7 @@ public final class KingLocationTracker {
     }
 
     private static void onLocation(ClientboundLocationPacket packet) {
+        com.safariking.stats.SafariLocationTracker.onLocation(packet);
         String mode = packet.getMode().orElse("").toLowerCase(Locale.ROOT);
         String map = packet.getMap().orElse("").toLowerCase(Locale.ROOT);
         safari = mode.equals("safari") || map.contains("critter safari") || map.equals("safari");
@@ -102,6 +103,7 @@ public final class KingLocationTracker {
     }
 
     public static void reset() {
+        com.safariking.stats.SafariLocationTracker.onGameLogin();
         safari = false;
         galatea = false;
         torrhus = false;

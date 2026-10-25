@@ -36,8 +36,12 @@ dependencies {
 
 processResources {
     inputs.property 'version', project.version
+    inputs.property 'minecraft_version', project.minecraft_version
+    inputs.property 'loader_version', project.loader_version
+    inputs.property 'fabric_api_version', project.fabric_api_version
     filesMatching('fabric.mod.json') {
-        expand version: project.version
+        expand version: project.version, minecraft_version: project.minecraft_version,
+                loader_version: project.loader_version, fabric_api_version: project.fabric_api_version
     }
 }
 
@@ -52,3 +56,15 @@ jar {
     }
     from('THIRD_PARTY_NOTICES.md')
 }
+
+tasks.register('testParser', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.safariking.stats.ChatParserTest'
+    enableAssertions = true
+}
+
+tasks.named('test') {
+    failOnNoDiscoveredTests = false
+}
+check.dependsOn testParser

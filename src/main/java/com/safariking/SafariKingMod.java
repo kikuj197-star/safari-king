@@ -53,6 +53,8 @@ public final class SafariKingMod implements ClientModInitializer {
 
     private static void tick(Minecraft client) {
         KingLocationTracker.tick(client);
+        com.safariking.stats.SafariZoneTracker.tick();
+        com.safariking.stats.PartyMessageDispatcher.tick();
         if (!CONFIG.enabled) {
             HighlightTargetTracker.reset();
             CrystalHollowsChestTracker.reset();

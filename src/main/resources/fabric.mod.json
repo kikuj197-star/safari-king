@@ -3,7 +3,7 @@
   "id": "safariking",
   "version": "${version}",
   "name": "Safari King",
-  "description": "Location-aware visual enhancements for Safari, mining, and hunting targets.",
+  "description": "Safari capture and shard stats, missing-critter HUD, party queries, and location-aware visual helpers. Includes Safari Critter Stats: do not install both mods.",
   "authors": ["kikuj197-star"],
   "license": "MIT",
   "environment": "client",
@@ -12,16 +12,25 @@
     "modmenu": ["com.safariking.ModMenuIntegration"]
   },
   "mixins": [
-    "safariking.mixins.json"
+    "safariking.mixins.json",
+    "safariking.stats.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.19.3",
-    "fabric-api": ">=0.155.2+26.2",
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": ">=${fabric_api_version}",
     "hypixel-mod-api": ">=1.0.2",
-    "minecraft": "~26.2",
+    "minecraft": "~${minecraft_version}",
     "java": ">=25"
   },
   "suggests": {
     "modmenu": "*"
+  },
+  "breaks": {
+    "safaricritterstats": "*"
+  },
+  "contact": {
+    "homepage": "https://github.com/kikuj197-star/safari-king",
+    "sources": "https://github.com/kikuj197-star/safari-king",
+    "issues": "https://github.com/kikuj197-star/safari-king/issues"
   }
 }

@@ -29,6 +29,13 @@ public final class KingConfig {
     public boolean frozenTreasures = true;
     public boolean hideonfloor = true;
     public boolean floorDrops = true;
+    public boolean statsEnabled = true;
+    public boolean respondToPartyCommands = true;
+    public boolean showStatsHud = true;
+    public boolean announceRegionCompletion = true;
+    public int hudX = 8;
+    public int hudY = 8;
+    public float hudScale = 1.0F;
 
     public static KingConfig load() {
         if (!Files.isRegularFile(PATH)) return new KingConfig();
