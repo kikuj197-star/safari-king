@@ -25,11 +25,12 @@ public abstract class ClientPacketListenerMixin {
     private void safariStats$readCapture(ClientboundSystemChatPacket packet, CallbackInfo ci) {
         if (packet.overlay() || !SafariLocationTracker.ensureRunStarted()) return;
         String message = packet.content().getString();
-        ChatParser.parse(message).ifPresent(event ->
+        ChatParser.parse(message).ifPresent(event -> {
+            com.safariking.stats.SafariPartyTracker.onCapture(message, event);
             SafariCritterStatsMod.STATS.record(event, System.currentTimeMillis())
                 .filter(completion -> com.safariking.SafariKingMod.CONFIG.announceRegionCompletion)
-                .ifPresent(PartyMessageDispatcher::enqueue)
-        );
+                .ifPresent(PartyMessageDispatcher::enqueue);
+        });
         if (SafariCritterStatsMod.CONFIG.respondsToPartyCommands()) {
             PartyQuery.parsePartyChat(message).ifPresent(PartyMessageDispatcher::enqueue);
         }

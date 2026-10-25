@@ -62,6 +62,10 @@ The navy, gold and teal control panel has three tabs: **Stats & HUD**, **Safari 
 
 Use **Move & resize HUD** to drag the HUD and scroll over it to scale from 50% to 250%. The statistics tab also shows capture/shard totals and region progress when there is enough screen space.
 
+The missing-critter HUD also lists up to three party members, for example `Player: Haunted 4/10`. Each row uses **your current run's shared collection**, selecting the biome that teammate is in. Loaded player positions update four times per second; validated Loot Share activity provides a fallback when a teammate is outside entity tracking range. `*` marks a recently observed biome (up to 30 seconds), then it becomes `Unknown ?/?` until new information arrives. This does not read another player's private statistics or require teammates to install Safari King.
+
+The official Hypixel Mod API refreshes the party roster every ten seconds while this feature is active. No automatic chat messages are sent for the HUD. **Teammate progress** in **Stats & HUD** toggles these rows. Leaving Safari, changing servers or resetting statistics clears party locations.
+
 Turning statistics or the master switch off stops counting and queued replies. Re-enabling starts a fresh run if you are in Safari.
 
 ## Installation

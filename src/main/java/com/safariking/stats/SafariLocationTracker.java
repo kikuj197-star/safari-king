@@ -22,6 +22,7 @@ public final class SafariLocationTracker {
     }
 
     public static synchronized void onGameLogin() {
+        SafariPartyTracker.reset();
         inSafari = false;
         SafariZoneTracker.reset();
         SafariCritterStatsMod.STATS.reset();
@@ -29,6 +30,7 @@ public final class SafariLocationTracker {
     }
 
     public static synchronized void onLocation(ClientboundLocationPacket packet) {
+        SafariPartyTracker.reset();
         boolean nextInSafari = packet.getMode()
             .map(SafariLocationTracker::isSafariMode)
             .orElse(false);
@@ -50,6 +52,7 @@ public final class SafariLocationTracker {
     }
 
     public static synchronized void onMasterEnabledChanged(boolean enabled) {
+        SafariPartyTracker.reset();
         PartyMessageDispatcher.reset();
         SafariZoneTracker.reset();
         if (enabled && inSafari) {
