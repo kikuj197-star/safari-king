@@ -1,4 +1,10 @@
-# Safari King 2.0.0
+# Safari King 2.0.1 - Minecraft 26.3
+
+Fix a render-frame crash when a visual helper starts drawing, including on entering Torrhus Canyon. Minecraft 26.3's line snippet no longer provides a color target; Safari King now explicitly supplies the same single color target as vanilla lines while keeping depth testing disabled for through-wall outlines.
+
+Added a regression check against the actual Minecraft 26.3 pipeline templates. Statistics, HUD, party queries and individual highlight settings are unchanged. Requires the same dependencies as 2.0.0.
+
+## Included in Safari King 2.0
 
 Safari Critter Stats is now built into Safari King for Minecraft 26.2 and 26.3.
 

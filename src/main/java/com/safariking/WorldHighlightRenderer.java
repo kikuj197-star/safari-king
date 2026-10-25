@@ -1,9 +1,7 @@
 package com.safariking;
 
-import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
 import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.safariking.mixin.RenderPipelinesAccessor;
 import com.safariking.mixin.RenderTypeAccessor;
@@ -50,12 +48,7 @@ public final class WorldHighlightRenderer {
 
     private static RenderType createXrayLines() {
         RenderPipeline pipeline = RenderPipelinesAccessor.safariking$register(
-                RenderPipeline.builder(RenderPipelinesAccessor.safariking$getLinesSnippet())
-                .withLocation(Identifier.fromNamespaceAndPath(SafariKingMod.MOD_ID, "xray_lines"))
-                .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH)
-                .withPrimitiveTopology(PrimitiveTopology.LINES)
-                .withDepthStencilState(Optional.empty())
-                .build());
+                HighlightRenderPipelines.xrayLines(RenderPipelinesAccessor.safariking$getLinesSnippet()));
         RenderSetup setup = RenderSetup.builder(pipeline)
                 .setLayeringTransform(LayeringTransform.NO_LAYERING)
                 .createRenderSetup();
