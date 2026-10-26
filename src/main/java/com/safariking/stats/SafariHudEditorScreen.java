@@ -1,5 +1,6 @@
 package com.safariking.stats;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineTextWidget;
@@ -36,7 +37,7 @@ public final class SafariHudEditorScreen extends Screen {
             16,
             Component.literal("Drag the HUD with the left mouse button. Scroll over it to resize."),
             font).setMaxWidth(width - 40).setCentered(true);
-        addRenderableWidget(instructions);
+        addRenderableOnly(instructions);
 
         int gap = 8;
         int left = (width - BUTTON_WIDTH * 2 - gap) / 2;
@@ -74,7 +75,7 @@ public final class SafariHudEditorScreen extends Screen {
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         if (super.mouseClicked(event, doubleClick)) return true;
         SafariHudRenderer.HudBounds bounds = SafariHudRenderer.previewBounds(hudX, hudY, hudScale);
-        if (event.button() == 0 && bounds.contains(event.x(), event.y())) {
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && bounds.contains(event.x(), event.y())) {
             draggingHud = true;
             dragOffsetX = event.x() - hudX;
             dragOffsetY = event.y() - hudY;
@@ -86,7 +87,7 @@ public final class SafariHudEditorScreen extends Screen {
 
     @Override
     public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
-        if (draggingHud && event.button() == 0) {
+        if (draggingHud && event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
             hudX = (int) Math.round(event.x() - dragOffsetX);
             hudY = (int) Math.round(event.y() - dragOffsetY);
             clampToScreen();
@@ -97,7 +98,7 @@ public final class SafariHudEditorScreen extends Screen {
 
     @Override
     public boolean mouseReleased(MouseButtonEvent event) {
-        if (draggingHud && event.button() == 0) {
+        if (draggingHud && event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
             draggingHud = false;
             setDragging(false);
             saveLayout();

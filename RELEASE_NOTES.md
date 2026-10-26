@@ -1,3 +1,13 @@
+# Safari King 2.1.1 - Minecraft 26.3
+
+Fixed the missing-critter HUD editor ignoring left-click drags on Minecraft 26.3. Press, drag and release now use Minecraft's left mouse button constant instead of the older GLFW button number. Minecraft 26.3 uses SDL button numbering, where left is 1 rather than 0.
+
+The editor's decorative instructions no longer intercept clicks when the HUD overlaps them.
+
+Open `/sking` -> **Stats & HUD** -> **Move & resize HUD** to move the HUD; scroll over it to resize. This fix does not require disabling MenuFlow or resetting your Safari statistics or HUD settings.
+
+---
+
 # Safari King 2.1.0
 
 - Added up to three teammate rows below the missing-critter HUD, showing the teammate's biome and its shared Safari collection progress.
